@@ -1,17 +1,29 @@
 #!/bin/bash
 
-function run_ex1() {
-    local Output="$(echo $1|./ex1.py)"
-    echo ${Output#"What is your name?"}
+function run_command() {
+    local Command="$1"
+    local Input="$2"
+    local Prompt="$3"
+    local Output="$(echo $Input|$Command)"
+    echo ${Output#"$Prompt"}
 }
 
-Output1=$(run_ex1 "Cian")
-if [[ "$Output1" != "Hello Cian, nice to meet you!" ]]; then
-    echo "Error"
-    echo "Output is : $Output1"
-fi
-Output2=$(run_ex1 "Gemma")
-if [[ "$Output2" != "Hello Gemma, good to see you again!" ]]; then
-    echo "Error"
-    echo "Output is $Output2"
-fi
+
+function test_excercise() {
+    local Command="$1"
+    local Input="$2"
+    local Prompt="$3"
+    local Correct_out="$4"
+    local Output="$(run_command "$Command" "$Input" "$Prompt")"
+
+    if [[ "${Output}" != "$Correct_out" ]]; then
+        echo "Error"
+        echo "Output is ${Output}"
+    fi
+}
+
+test_excercise ./ex1.py "Cian" "What is your name?" "Hello Cian, nice to meet you!"
+test_excercise ./ex1.py "Gemma" "What is your name?" "Hello Gemma, good to see you again!"
+test_excercise ./ex2.py "Cian" "What is the input string?" "Cian has 4 characters"
+test_excercise ./ex2.py "Gemma" "What is the input string?" "Gemma has 5 characters"
+test_excercise ./ex2.py "" "What is the input string?" "You need to enter a word"
