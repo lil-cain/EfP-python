@@ -28,4 +28,4 @@ test_excercise ./ex2.py "Cian" "What is the input string?" "Cian has 4 character
 test_excercise ./ex2.py "Gemma" "What is the input string?" "Gemma has 5 characters"
 test_excercise ./ex2.py "" "What is the input string?" "You need to enter a word"
 test_excercise ./ex3.py "These aren't the droids you're looking for\nObi Wan Kenobi" "What is the quote?Who said it?" "Obi Wan Kenobi says \"These aren't the droids you're looking for\""
-
+test_excercise ./ex4.py "dog\nwalk\nblue\nquickly\n" "Enter a noun?Enter a verb?Enter an adjective?Enter an adverb?" "Do you walk your blue dog quickly? That's a bit mad!"
