@@ -4,7 +4,7 @@ function run_command() {
     local Command="$1"
     local Input="$2"
     local Prompt="$3"
-    local Output="$(echo $Input|$Command)"
+    local Output="$(echo -e $Input|$Command)"
     echo ${Output#"$Prompt"}
 }
 
@@ -27,3 +27,5 @@ test_excercise ./ex1.py "Gemma" "What is your name?" "Hello Gemma, good to see y
 test_excercise ./ex2.py "Cian" "What is the input string?" "Cian has 4 characters"
 test_excercise ./ex2.py "Gemma" "What is the input string?" "Gemma has 5 characters"
 test_excercise ./ex2.py "" "What is the input string?" "You need to enter a word"
+test_excercise ./ex3.py "These aren't the droids you're looking for\nObi Wan Kenobi" "What is the quote?Who said it?" "Obi Wan Kenobi says \"These aren't the droids you're looking for\""
+
