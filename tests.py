@@ -25,11 +25,15 @@ class TestCase(unittest.TestCase):
         greeting = json.loads(response.data.decode())['response']
         self.assertEqual(greeting, "You need to tell me your name", "Blank string works")
 
-    def test_excercise2(self):
-        response = self.app.get('/count/omgwtf')
+    @hypothesis.given(st.text(min_size=1, alphabet=st.characters(
+        blacklist_characters=["\n",',',':','/','?','#','[',']',
+                              '@','!','$','&','(',')','*','+',';','='], max_codepoint='\ud799')))
+    def test_excercise2_with_string(self, s):
+        response = self.app.get("/count/%s" % s)
         count = json.loads(response.data.decode())['count']
-        self.assertEqual(int(count), 6, "String count")
+        self.assertEqual(int(count), len(s), "String count")
 
+    def test_excercise2_without_string(self):
         response = self.app.get('/count/')
         response = json.loads(response.data.decode())['response']
         self.assertEqual(response, "No string provided", "blank string")
