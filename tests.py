@@ -1,7 +1,6 @@
-import os
-import unittest
-import json
-
+import os, json, unittest
+import hypothesis
+import hypothesis.strategies as st
 from app import app
 
 class TestCase(unittest.TestCase):
@@ -9,18 +8,22 @@ class TestCase(unittest.TestCase):
         app.config['TESTING'] = True
         self.app = app.test_client()
 
-    def test_excercise1(self):
-        response = self.app.get('/greet/Cian')
+    @hypothesis.given(st.text(min_size=1, alphabet=st.characters(
+        blacklist_characters=["\n",',',':','/','?','#','[',']',
+                              '@','!','$','&','(',')','*','+',';','='])))
+    def test_excercise1(self, s):
+        response = self.app.get("/greet/%s" % s)
         greeting = json.loads(response.data.decode())
-        self.assertTrue(greeting['response'] == "Hello Cian, nice to meet you!", "Default works!")
+        self.assertEqual(greeting['response'],  "Hello %s, nice to meet you!" % s, "Default works!")
 
+    def test_excercise1_special_case(self):
         response = self.app.get('/greet/Gemma')
         greeting = json.loads(response.data.decode())['response']
-        self.assertTrue(greeting == "Hello Gemma, you're looking good!", "Gemma works")
+        self.assertEqual(greeting, "Hello Gemma, you're looking good!", "Gemma works")
 
         response = self.app.get('/greet/')
         greeting = json.loads(response.data.decode())['response']
-        self.assertTrue(greeting == "You need to tell me your name", "Blank string works")
+        self.assertEqual(greeting, "You need to tell me your name", "Blank string works")
 
     def test_excercise2(self):
         response = self.app.get('/count/omgwtf')
@@ -51,7 +54,20 @@ class TestCase(unittest.TestCase):
             "Do you walk your blue dog quickly? That's a bit mad",
             "madlib")
 
+    def test_excercise5(self):
+        response = self.app.get('/math/', data=json.dumps([4, 10, 15]))
+        response = json.loads(response.data.decode())
+        self.assertEqual(response['addition'], '4 + 10 + 15 = 29', 'addition')
+        self.assertEqual(response['subtraction'], '4 - 10 - 15 = -21', 'subtraction')
+        self.assertEqual(response['multiplication'], '4 * 10 * 15 = 600', 'multiplication')
+        self.assertEqual(response['division'], '4 / 10 / 15 = 0.026667', 'divison')
 
+    def test_excercise6(self):
+        response = self.app.get('/retirement/',
+            data=json.dumps({'age': 28, 'retirementAge': 70}))
+        response = json.loads(response.data.decode())
+        self.assertEqual(response['yearsTillRetirement'], 42, 'years till retirement')
+        self.assertEqual(response['retirementYear'], 2058, 'retirement year')
 
 if __name__ == '__main__':
     unittest.main()
